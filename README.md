@@ -1,4 +1,4 @@
-Ansible Tutorial
+# Ansible Tutorial
 
 ansible all --key-file ~/.ssh/ansible -i inventory -m ping
 
@@ -19,7 +19,6 @@ ansible all -m gather_facts --limit 192.168.56.4
 - **`--become`**: This flag is used to elevate privileges, which is often necessary when making changes to a system. By default, Ansible runs tasks as the current user. If you need to perform tasks that require root or another user's permissions, you can use the `--become` option.
 
 - **`--ask-become-pass`**: This flag prompts for the privilege escalation password. When you use the `--become` option, you might need to enter a password to gain the necessary privileges. The `--ask-become-pass` option prompts you to enter this password when you run the command.
-
 
  ansible all -m apt -a name=vim-nox --become --ask-become-pass
 

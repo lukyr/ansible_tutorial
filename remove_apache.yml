@@ -1,22 +1,41 @@
 ---
 
-- hosts: all
+- name: Ansible Tutorial
+  hosts: all
   become: true
   tasks:
 
-  - name: update repository index
-    apt:
-      update_cache: yes
-    when: ansible_distribution == 'Ubuntu'
-  
-  - name: install apache2 package
-    apt:
-      name: apache2
-      state: absent
-    when: ansible_distribution == 'Ubuntu'
+    - name: Update repository index
+      apt:
+        update_cache: true
+      when: ansible_distribution == 'Ubuntu'
 
-  - name: add php support for apache2
-    apt:
-      name: libapache2-mod-php
+    - name: Install apache2 package
+      apt:
+        name: apache2
       state: absent
-    when: ansible_distribution == 'Ubuntu'
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Add php support for apache2
+      apt:
+        name: libapache2-mod-php
+      state: absent
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Update repository index
+      dnf:
+        update_cache: true
+      state: absent
+      when: ansible_distribution == 'CentOS'
+
+    - name: Install apache2 package
+      dnf:
+        name: httpd
+      state: absent
+      when: ansible_distribution == 'CentOS'
+
+    - name: Add php support for apache2
+      dnf:
+        name: php
+      state: absent
+      when: ansible_distribution == 'CentOS'
