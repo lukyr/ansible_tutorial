@@ -16,6 +16,11 @@ Vagrant.configure("2") do |config|
     vm3.vm.network "private_network", ip: "192.168.56.6"
   end
 
+  config.vm.define "vm4" do |vm4|
+    vm4.vm.box = "hashicorp/bionic64"
+    vm4.vm.network "private_network", ip: "192.168.56.7"
+  end
+
   # Define the base box for the fourth VM
   # config.vm.define "vm4" do |vm4|
   #   vm4.vm.box = "centos/7"
