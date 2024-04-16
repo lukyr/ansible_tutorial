@@ -1,12 +1,55 @@
 ---
-- name: Ansible Tutorial
-  hosts: all
+
+- name: Web Server Configuration
+  tags: always
+  hosts: web_servers
   become: true
   tasks:
-    - name: Remove apache2 and php packages for ubuntu
-      package:
+    - name: Uninstall Apache and php for Ubuntu web_servers
+      tags: apache,apache2,php
+      apt:
         name:
-          - "{{ apache_package }}"
-          - "{{ php_package }}"
+          - apache2
+          - libapache2-mod-php
         state: absent
-        update_cache: true
+        # update_cache: true
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Uninstall apache and php for CentOS web_servers
+      tags: apache,httpd,centos
+      dnf:
+        name:
+          - httpd
+          - php
+        state: absent
+        # update_cache: true
+      when: ansible_distribution == 'CentOS'
+
+- name: Uninstall mariadb package (CentOS)
+  hosts: db_servers
+  become: true
+  tasks:
+    - name: Uninstall mariadb for CentOS db_servers
+      tags: centos,db,mariadb
+      dnf:
+        name: mariadb
+        state: absent
+        # update_cache: true
+      when: ansible_distribution == 'CentOS'
+    - name: Uninstall mariadb package (Ubuntu)
+      tags: ubuntu,db,mariadb
+      apt:
+        name: mariadb-server
+        state: absent
+        # update_cache: true
+      when: ansible_distribution == 'Ubuntu'
+
+- name: File Server Configuration
+  hosts: file_servers
+  become: true
+  tasks:
+    - name: Uninstall samba package
+      tags: samba
+      package:
+        name: samba
+        state: absent

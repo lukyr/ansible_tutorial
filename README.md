@@ -29,3 +29,5 @@ ansible all -m apt -a name="snapd state=latest" --become --ask-become-pass
   ansible-playbook --list-tags site.yml
 - **`install using tag`**
   ansible-playbook --tags ubuntu --ask-become-pass site.yml
+- **`install using multiple tag`**
+  ansible-playbook --tags "apache,db" --ask-become-pass site.yml
