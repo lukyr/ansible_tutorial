@@ -43,6 +43,15 @@
         # update_cache: true
       when: ansible_distribution == 'CentOS'
 
+    - name: Change e-mail address for admin
+      tags: apache, centos, httpd
+      lineinfile:
+        path: /etc/httpd/conf/httpd.conf
+        regexp: '^ServerAdmin'
+        line: ServerAdmin somebody@somewhere.net
+      when: ansible_distribution == 'CentOS'
+      register: httpd
+
     - name: Copy default html file for site
       tags: apache,apache2,httpd
       copy:
