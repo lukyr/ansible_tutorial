@@ -1,0 +1,43 @@
+---
+
+- name: Play Name
+  hosts: all
+  become: true
+  tasks:
+    - name: Install updates (CentOS)
+      tags: always
+      dnf:
+        # update_only: true
+        update_cache: true
+      when: ansible_distribution == 'CentOS'
+
+    - name: Install updates (Ubuntu)
+      tags: always
+      apt:
+        # upgrade: dist
+        update_cache: true
+      when: ansible_distribution == 'Ubuntu'
+
+- name: All User Bootstraping
+  hosts: all
+  become: true
+  tasks:
+    - name: Create user
+      tags: always
+      user:
+        name: lukyr
+        group: root
+    - name: Add ssh key for lukyr
+      tags: always
+      authorized_key:
+        user: lukyr
+        key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKgKWivhoF5fRm5Jpk4DK50/yK1J/tV+OU7/8GNH4av5 ansible"
+        # key: "{{ lookup('file', '/home/lukyr/.ssh/ansible.pub') }}"
+    - name: Add sudoers file for lukyr
+      tags: always
+      copy:
+        src: sudoer_lukyr
+        dest: /etc/sudoers.d/lukyr
+        owner: root
+        group: root
+        mode: '0440'

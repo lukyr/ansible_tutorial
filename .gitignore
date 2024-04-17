@@ -1,3 +1,9 @@
 .vscode
 .vagrant
 venv
+.terraform
+virtualbox.box
+lock.hcl
+.terraform.tfstate.lock.info
+.terraform.tfstate.
+.terraform.lock

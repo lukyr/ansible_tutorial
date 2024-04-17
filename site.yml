@@ -4,18 +4,18 @@
   hosts: all
   become: true
   tasks:
-    - name: Install updates (CentOS)
+    - name: Update repo cache (CentOS)
       tags: always
       dnf:
         # update_only: true
-        update_cache: true
+      changed_when: false
       when: ansible_distribution == 'CentOS'
 
-    - name: Install updates (Ubuntu)
+    - name: Update repo cache (Ubuntu)
       tags: always
       apt:
         # upgrade: dist
-        update_cache: true
+      changed_when: false
       when: ansible_distribution == 'Ubuntu'
 
 - name: Web Server Configuration
@@ -42,6 +42,22 @@
         state: present
         # update_cache: true
       when: ansible_distribution == 'CentOS'
+
+    - name: Change e-mail address for admin
+      tags: apache, centos, httpd
+      lineinfile:
+        path: /etc/httpd/conf/httpd.conf
+        regexp: '^ServerAdmin'
+        line: ServerAdmin somebody@somewhere.net
+      when: ansible_distribution == 'CentOS'
+      register: httpd
+
+    - name: Restart httpd (CentOS)
+      tags: apache, centos, httpd
+      service:
+        name: httpd
+        state: restarted
+      when: httpd.changed
 
     - name: Copy default html file for site
       tags: apache,apache2,httpd
@@ -81,11 +97,23 @@
         name: samba
         state: present
 
+- name: All User Bootstraping
+  hosts: all
+  become: true
+  tasks:
+    - name: Add ssh key for lukyr
+      tags: always
+      authorized_key:
+        user: lukyr
+        key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKgKWivhoF5fRm5Jpk4DK50/yK1J/tV+OU7/8GNH4av5 ansible"
+        # key: "{{ lookup('file', '/home/lukyr/.ssh/ansible.pub') }}"
+
 - name: Host example Files Configuration
   hosts: workstations
   become: true
   tasks:
     - name: Install unzip
+      tags: terraform
       package:
         name: unzip
         state: present
