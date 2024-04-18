@@ -1,0 +1,14 @@
+- name: Install unzip
+  tags: terraform
+  package:
+    name: unzip
+    state: present
+- name: Install Terraform
+  tags: terraform
+  unarchive:
+    src: https://releases.hashicorp.com/terraform/1.8.0/terraform_1.8.0_linux_amd64.zip
+    dest: /usr/local/bin
+    remote_src: true
+    mode: '0755'
+    owner: root
+    group: root
