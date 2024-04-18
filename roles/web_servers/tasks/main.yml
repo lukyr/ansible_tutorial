@@ -1,40 +1,29 @@
 - name: Install Apache and php for Ubuntu web_servers
-  tags: apache,apache2,php
-  apt:
+  tags: apache,httpd,php
+  package:
     name:
-      - apache2
-      - libapache2-mod-php
+      - "{{ apache_package_name }}"
+      - "{{ php_package_name }}"
     state: present
     # update_cache: true
-  when: ansible_distribution == 'Ubuntu'
 
-- name: Install apache and php for CentOS web_servers
-  tags: apache,httpd,centos
-  dnf:
-    name:
-      - httpd
-      - php
-    state: present
-    # update_cache: true
-  when: ansible_distribution == 'CentOS'
+- name: Start and enable apache service
+  tags: apache,httpd
+  service:
+    name: "{{ apache_service }}"
+    state: started
+    enabled: true
 
 - name: Change e-mail address for admin
   tags: apache, centos, httpd
   lineinfile:
     path: /etc/httpd/conf/httpd.conf
     regexp: '^ServerAdmin'
-    line: ServerAdmin somebody@somewhere.net
+    line: ServerAdmin somebody@somewhere.com
   when: ansible_distribution == 'CentOS'
-  register: httpd
+  notify: restart_apache
 
-- name: Restart httpd (CentOS)
-  tags: apache, centos, httpd
-  service:
-    name: httpd
-    state: restarted
-  when: httpd.changed
-
-- name: Copy default html file for site
+- name: Copy html file for site
   tags: apache,apache2,httpd
   copy:
     src: default_site.html
